@@ -34,9 +34,11 @@ async function firstQuestion() {
       ],
     },
   ]);
+  console.log("mainQ", mainQuestionAnswers.start);
+
   switch (mainQuestionAnswers.start) {
     case "View all employees by department":
-      viewAllEmployees();
+      viewAllEmployeesByDepartment();
       break;
     case "View all roles":
       viewAllRoles();
@@ -56,6 +58,9 @@ async function firstQuestion() {
     case "Update employee role":
       updateEmployee();
       break;
+    case "View all employees":
+      viewAllEmployees();
+      break;
   }
 }
 
@@ -72,39 +77,38 @@ async function addEmployee() {
       message: "What is the employee's last name?",
     },
     {
-      type: "list",
-      name: "lastName",
+      type: "input",
+      name: "role",
       message: "What is the employee's role",
-      choices: [
-        "Sales Lead",
-        "Salesperson",
-        "Lead Engineer",
-        "Software Engineer",
-        "Accountant",
-        "Legal Team Lead",
-        "Lawyer",
-      ],
+      // user enter the role id OR
+      // query the data to show all of the roles
     },
     {
-      type: "list",
+      type: "input",
       name: "managerName",
       message: "Who is the employee's manager?",
-      choices: ["John Doe", "Sarah Safe", "Mike Man"],
+      // user enter the manager id OR
+      // query the data to show all of the managers
     },
   ]);
   console.log(addEmployeeAnswers);
 
-  // connection.query(
-  //   "INSERT INTO employee (firstName, lastName, ) VALUES (?,?,?)",
-  //   [addEmployeeAnswers.firstName, addEmployeeAnswers.lastName],
-  //   function (err, results) {
-  //     if (err) {
-  //       console.error(err);
-  //     } else {
-  //       console.table(results);
-  //     }
-  //   }
-  // );
+  connection.query(
+    "INSERT INTO employee (firstName, lastName, roles_id, manager_id) VALUES (?,?,?,?)",
+    [
+      addEmployeeAnswers.firstName,
+      addEmployeeAnswers.lastName,
+      addEmployeeAnswers.role,
+      addEmployeeAnswers.managerName,
+    ],
+    function (err, results) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.table(results);
+      }
+    }
+  );
 }
 
 async function addDepartment() {
@@ -136,8 +140,8 @@ async function viewAllDepartments() {
     if (error) {
       console.log(error);
     } else {
-      firstQuestion();
       console.table(departments);
+      firstQuestion();
     }
   });
 }
@@ -156,7 +160,14 @@ async function addRole() {
 function updateEmployee() {}
 
 function viewAllEmployees() {
-  // SELECT * FROM employee console.table
+  connection.query("SELECT * FROM employee", function (error, employees) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(employees);
+      firstQuestion();
+    }
+  });
 }
 
 function viewAllRoles() {
