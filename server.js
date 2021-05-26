@@ -78,12 +78,13 @@ async function addEmployee() {
     {
       type: "input",
       name: "lastName",
-      message: "What is the employee's last name?",
+      message: "What is the employee's last name? ",
     },
     {
       type: "input",
       name: "role",
-      message: "Please enter your role ID",
+      message:
+        "Please enter your role ID. Sales = 1, Engineering = 2, Finance = 3, Legal = 4, Manager = 5",
     },
     {
       type: "input",
@@ -94,7 +95,7 @@ async function addEmployee() {
   console.log(addEmployeeAnswers);
 
   connection.query(
-    "INSERT INTO employee (firstName, lastName, roles_id, manager_id) VALUES (?,?,?,?)",
+    "INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES (?,?,?,?)",
     [
       addEmployeeAnswers.firstName,
       addEmployeeAnswers.lastName,
@@ -105,7 +106,8 @@ async function addEmployee() {
       if (err) {
         console.error(err);
       } else {
-        console.table(results);
+        console.log("Success, employee added");
+        firstQuestion();
       }
     }
   );
@@ -122,7 +124,7 @@ async function addDepartment() {
   console.log(addDepartmentAnswers);
 
   connection.query(
-    "INSERT INTO department (departmentName) VALUES (?)",
+    "INSERT INTO department (department_name) VALUES (?)",
     [addDepartmentAnswers.department],
     function (err, results) {
       if (err) {
