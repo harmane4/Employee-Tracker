@@ -31,6 +31,7 @@ async function firstQuestion() {
         "Add a role",
         "Add an employee",
         "Update employee role",
+        "Exit",
       ],
     },
   ]);
@@ -61,6 +62,9 @@ async function firstQuestion() {
     case "View all employees":
       viewAllEmployees();
       break;
+    case "Exit":
+      exitFunction();
+      break;
   }
 }
 
@@ -79,16 +83,12 @@ async function addEmployee() {
     {
       type: "input",
       name: "role",
-      message: "What is the employee's role",
-      // user enter the role id OR
-      // query the data to show all of the roles
+      message: "Please enter your role ID",
     },
     {
       type: "input",
       name: "managerName",
-      message: "Who is the employee's manager?",
-      // user enter the manager id OR
-      // query the data to show all of the managers
+      message: "Please enter your manager ID",
     },
   ]);
   console.log(addEmployeeAnswers);
@@ -128,7 +128,7 @@ async function addDepartment() {
       if (err) {
         console.error(err);
       } else {
-        console.log(results);
+        console.log(results, "Success, new department added");
         firstQuestion();
       }
     }
@@ -154,7 +154,7 @@ async function addRole() {
       message: "What role would you like to add?",
     },
   ]);
-  console.log(addRoleAnswers);
+  console.log(addRoleAnswers, "Success, new role added");
 }
 
 function updateEmployee() {}
@@ -164,43 +164,28 @@ function viewAllEmployees() {
     if (error) {
       console.log(error);
     } else {
-      console.log(employees);
+      console.table(employees);
       firstQuestion();
     }
   });
 }
 
 function viewAllRoles() {
-  // SELECT * FROM roles console.table
+  connection.query("SELECT * FROM roles", function (error, roles) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.table(roles);
+      firstQuestion();
+    }
+  });
+}
+
+function exitFunction() {
+  connection.end();
 }
 
 connection.connect((err) => {
   if (err) throw err;
   console.log(`connected as id ${connection.threadId}`);
 });
-
-// class Employee {
-//   constructor(id, firstName, lastName, roles_id, manager_id) {
-//     this.id;
-//     this.firstName;
-//     this.lastName;
-//     this.roles_id;
-//     this.manager_id;
-//   }
-// }
-
-// class Department {
-//   constructor(id, departmentName) {
-//     this.id;
-//     this.departmentName;
-//   }
-// }
-
-// class Roles {
-//   constructor(id, title, salary, department_id) {
-//     this.id;
-//     this.title;
-//     this.salary;
-//     this.department_id;
-//   }
-// }
