@@ -23,7 +23,6 @@ async function firstQuestion() {
       name: "start",
       message: "What would you like to do?",
       choices: [
-        "View all employees by department",
         "View all roles",
         "View all employees",
         "View all departments",
@@ -38,9 +37,6 @@ async function firstQuestion() {
   console.log("mainQ", mainQuestionAnswers.start);
 
   switch (mainQuestionAnswers.start) {
-    case "View all employees by department":
-      viewAllEmployeesByDepartment();
-      break;
     case "View all roles":
       viewAllRoles();
       break;
@@ -121,7 +117,6 @@ async function addDepartment() {
       message: "What department would you like to add?",
     },
   ]);
-  console.log(addDepartmentAnswers);
 
   connection.query(
     "INSERT INTO department (department_name) VALUES (?)",
@@ -130,7 +125,7 @@ async function addDepartment() {
       if (err) {
         console.error(err);
       } else {
-        console.log(results, "Success, new department added");
+        console.log("Success, new department added");
         firstQuestion();
       }
     }
@@ -155,8 +150,26 @@ async function addRole() {
       name: "role",
       message: "What role would you like to add?",
     },
+    {
+      type: "input",
+      name: "salary",
+      message: "What salary does the role have?",
+    },
   ]);
+  connection.query(
+    "INSERT INTO roles (title, salary) VALUES (?, ?)",
+    [addRoleAnswers.role, addRoleAnswers.salary],
+    function (err, results) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("Success, new role added");
+        firstQuestion();
+      }
+    }
+  );
   console.log(addRoleAnswers, "Success, new role added");
+  firstQuestion();
 }
 
 function updateEmployee() {}
